@@ -39,6 +39,6 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation 'com.google.protobuf:protobuf-java:3.4.0'
-    implementation 'ch.epfl.dedis:cothority:2.0.2'
+    implementation 'ch.epfl.dedis:cothority:master-180704'
     implementation 'org.slf4j:slf4j-android:1.7.25'
 }
