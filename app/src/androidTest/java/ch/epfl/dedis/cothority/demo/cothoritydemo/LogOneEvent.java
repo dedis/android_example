@@ -10,12 +10,12 @@ import org.junit.runner.RunWith;
 
 import java.util.Arrays;
 
-import ch.epfl.dedis.lib.eventlog.Event;
+import ch.epfl.dedis.eventlog.Event;
 import ch.epfl.dedis.lib.exception.CothorityException;
-import ch.epfl.dedis.lib.omniledger.InstanceId;
-import ch.epfl.dedis.lib.omniledger.OmniledgerRPC;
-import ch.epfl.dedis.lib.omniledger.contracts.EventLogInstance;
-import ch.epfl.dedis.lib.omniledger.darc.Signer;
+import ch.epfl.dedis.byzcoin.InstanceId;
+import ch.epfl.dedis.byzcoin.ByzCoinRPC;
+import ch.epfl.dedis.eventlog.EventLogInstance;
+import ch.epfl.dedis.lib.darc.Signer;
 
 import static org.junit.Assert.*;
 
@@ -41,14 +41,11 @@ public class LogOneEvent {
         mString = mString.concat("\nID {" + Build.ID + "}");
 
         Signer admin = SecureKG.getSigner();
-        OmniledgerRPC ol = null;
+        ByzCoinRPC bc = null;
         try {
-            ol = SecureKG.getOmniledgerRPC();
-            EventLogInstance el = new EventLogInstance(ol, SecureKG.getEventlogId());
-            InstanceId key = el.log(new Event("android-info", mString), Arrays.asList(admin));
-
-            assertEquals(key.getDarcId(), SecureKG.getDarcId());
-
+            bc = SecureKG.getbyzcoinRPC();
+            EventLogInstance el = EventLogInstance.fromByzcoin(bc, SecureKG.getEventlogId());
+            InstanceId key = el.log(new Event("android-info", mString), bc.getGenesisDarcInstance().getId(), Arrays.asList(admin));
         } catch (CothorityException e) {
             e.printStackTrace();
         }
