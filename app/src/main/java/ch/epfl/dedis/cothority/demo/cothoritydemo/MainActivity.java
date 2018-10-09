@@ -11,12 +11,12 @@ import android.view.MenuItem;
 
 import java.util.Arrays;
 
-import ch.epfl.dedis.lib.eventlog.Event;
+import ch.epfl.dedis.eventlog.Event;
 import ch.epfl.dedis.lib.exception.CothorityException;
-import ch.epfl.dedis.lib.omniledger.InstanceId;
-import ch.epfl.dedis.lib.omniledger.OmniledgerRPC;
-import ch.epfl.dedis.lib.omniledger.contracts.EventLogInstance;
-import ch.epfl.dedis.lib.omniledger.darc.Signer;
+import ch.epfl.dedis.byzcoin.InstanceId;
+import ch.epfl.dedis.byzcoin.ByzCoinRPC;
+import ch.epfl.dedis.eventlog.EventLogInstance;
+import ch.epfl.dedis.lib.darc.Signer;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,11 +33,11 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 Signer admin = SecureKG.getSigner();
-                OmniledgerRPC ol = null;
+                ByzCoinRPC bc = null;
                 try {
-                    ol = SecureKG.getOmniledgerRPC();
-                    EventLogInstance el = new EventLogInstance(ol, SecureKG.getEventlogId());
-                    InstanceId key = el.log(new Event("android-hello", "Hello from MainActivity!"), Arrays.asList(admin));
+                    bc = SecureKG.getbyzcoinRPC();
+                    EventLogInstance el = EventLogInstance.fromByzcoin(bc, SecureKG.getEventlogId());
+                    InstanceId key = el.log(new Event("android-hello", "Hello from MainActivity!"), bc.getGenesisDarc().getId(), Arrays.asList(admin));
                 } catch (CothorityException e) {
                     e.printStackTrace();
                 }
