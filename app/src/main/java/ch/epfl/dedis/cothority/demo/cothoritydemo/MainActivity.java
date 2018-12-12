@@ -10,7 +10,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import java.util.Arrays;
+import java.util.List;
 
+import ch.epfl.dedis.byzcoin.SignerCounters;
 import ch.epfl.dedis.eventlog.Event;
 import ch.epfl.dedis.lib.exception.CothorityException;
 import ch.epfl.dedis.byzcoin.InstanceId;
@@ -19,6 +21,20 @@ import ch.epfl.dedis.eventlog.EventLogInstance;
 import ch.epfl.dedis.lib.darc.Signer;
 
 public class MainActivity extends AppCompatActivity {
+    ByzCoinRPC bc;
+    SignerCounters ctrs;
+    Signer signer;
+    int ct;
+
+    public MainActivity() {
+        try {
+            bc = SecureKG.getRPC();
+            signer = SecureKG.getSigner();
+            ctrs = bc.getSignerCounters(Arrays.asList(signer.getIdentity().toString()));
+        } catch (CothorityException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,13 +47,12 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                Signer admin = SecureKG.getSigner();
-                ByzCoinRPC bc = null;
                 try {
-                    bc = SecureKG.getbyzcoinRPC();
+                    ctrs.increment();
                     EventLogInstance el = EventLogInstance.fromByzcoin(bc, SecureKG.getEventlogId());
-                    InstanceId key = el.log(new Event("android-hello", "Hello from MainActivity!"), bc.getGenesisDarc().getId(), Arrays.asList(admin));
+                    InstanceId key = el.log(new Event("android-hello", "Hello from MainActivity! " + ct),
+                            Arrays.asList(signer), ctrs.getCounters());
+                    ct++;
                 } catch (CothorityException e) {
                     e.printStackTrace();
                 }

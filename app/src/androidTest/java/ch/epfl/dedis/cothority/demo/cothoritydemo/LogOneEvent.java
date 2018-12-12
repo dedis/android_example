@@ -10,6 +10,7 @@ import org.junit.runner.RunWith;
 
 import java.util.Arrays;
 
+import ch.epfl.dedis.byzcoin.SignerCounters;
 import ch.epfl.dedis.eventlog.Event;
 import ch.epfl.dedis.lib.exception.CothorityException;
 import ch.epfl.dedis.byzcoin.InstanceId;
@@ -43,9 +44,14 @@ public class LogOneEvent {
         Signer admin = SecureKG.getSigner();
         ByzCoinRPC bc = null;
         try {
-            bc = SecureKG.getbyzcoinRPC();
+            bc = SecureKG.getRPC();
+
+            SignerCounters ctrs = bc.getSignerCounters(Arrays.asList(admin.getIdentity().toString()));
+            ctrs.increment();
+
             EventLogInstance el = EventLogInstance.fromByzcoin(bc, SecureKG.getEventlogId());
-            InstanceId key = el.log(new Event("android-info", mString), bc.getGenesisDarcInstance().getId(), Arrays.asList(admin));
+            InstanceId key = el.log(new Event("android-info", mString),
+                    Arrays.asList(admin), ctrs.getCounters());
         } catch (CothorityException e) {
             e.printStackTrace();
         }
