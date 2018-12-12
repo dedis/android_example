@@ -1,20 +1,18 @@
 package ch.epfl.dedis.cothority.demo.cothoritydemo;
 
+import ch.epfl.dedis.byzcoin.ByzCoinRPC;
+import ch.epfl.dedis.byzcoin.InstanceId;
+import ch.epfl.dedis.lib.Hex;
 import ch.epfl.dedis.lib.Roster;
 import ch.epfl.dedis.lib.SkipblockId;
-import ch.epfl.dedis.lib.Hex;
-import ch.epfl.dedis.lib.exception.CothorityCryptoException;
-import ch.epfl.dedis.lib.exception.CothorityException;
-import ch.epfl.dedis.byzcoin.InstanceId;
-import ch.epfl.dedis.byzcoin.ByzCoinRPC;
-import ch.epfl.dedis.lib.darc.DarcId;
 import ch.epfl.dedis.lib.darc.Signer;
 import ch.epfl.dedis.lib.darc.SignerEd25519;
+import ch.epfl.dedis.lib.exception.CothorityCryptoException;
+import ch.epfl.dedis.lib.exception.CothorityException;
 
 /**
- * For testing with our deployed servers, you may use this class. You will need to ask
- * for the details to fill in here.
- * </pre>
+ * For testing with our deployed servers, you may use this class.
+ * It contains an ByzCoinRPC object and a signer object which are already initialised.
  */
 public final class SecureKG {
     /**
@@ -40,17 +38,21 @@ public final class SecureKG {
     }
 
     /**
-     * Gets the genesis skipblock ID of an existing byzcoin service.
+     * Gets the genesis skipblock ID of an existing ByzCoin service.
      * @return the genesis skipblock ID
      */
     public static SkipblockId getSkipchainId() throws CothorityCryptoException {
-        return new SkipblockId(Hex.parseHexBinary("347c2e0f2998bb9e4fda92612b43abdf54f65d220043a46e47acd991ecd3c6d7"));
+        // This is the hex id in the bc-$hex.cfg file.
+        return new SkipblockId(Hex.parseHexBinary("0ab721ada6ac482a04db9d645c2528a1ff5bd62d785638c8b6ad1b0254af35fd"));
     }
 
     /**
      * Gets the signer that has "invoke:eventlog" and "spawn:eventlog" permissions.
      */
     public static Signer getSigner() {
+        // output of "el create --keys"
+        // Identity: ed25519:9203b8f065d7e8273175f3bb674b317c4a00bbfd9fa20675cccaac59585c4ec4
+        // export PRIVATE_KEY=ea29d91778840fcc567d7bb4c4a82929923aa8ce1ea7ecf16b25106bc0362e00
         return new SignerEd25519(Hex.parseHexBinary("ea29d91778840fcc567d7bb4c4a82929923aa8ce1ea7ecf16b25106bc0362e00"));
     }
 
@@ -59,15 +61,16 @@ public final class SecureKG {
      * @return the instance ID.
      */
     public static InstanceId getEventlogId() throws CothorityCryptoException {
-        return new InstanceId(Hex.parseHexBinary("24728948c65135c7c866811b8bc77728dd40369c5f60cb2c3590246042676231"));
+        // output of ./el create
+        //export EL=06c30c5d5a83cef67dd94db576ad2c16ed7acf158dac4a92bdc0d92b07bdc030
+        return new InstanceId(Hex.parseHexBinary("06c30c5d5a83cef67dd94db576ad2c16ed7acf158dac4a92bdc0d92b07bdc030"));
     }
 
     /**
-     * Get the pre-configured byzcoin RPC.
-     * @return the byzcoin RPC object
+     * Get the pre-configured ByzCoinRPC.
+     * @return the ByzCoinRPC object
      */
-    public static ByzCoinRPC getbyzcoinRPC() throws CothorityException {
+    public static ByzCoinRPC getRPC() throws CothorityException {
         return ByzCoinRPC.fromByzCoin(getRoster(), getSkipchainId());
     }
 }
-
